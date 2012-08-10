@@ -12,10 +12,12 @@ cabal-version:      >= 1.6
 build-type:         Simple
 
 library
-    exposed-modules:    Control.Concurrent.ThreadObjects
+    exposed-modules:    Control.Concurrent.ThreadObject
                         Control.Concurrent.StateRecords
     build-depends:      base >=3 && < 5
+    Extensions : DoAndIfThenElse
 
 source-repository head
   type:    git 
   location: https://github.com/timthelion/threadObjects.git
+

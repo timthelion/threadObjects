@@ -1,7 +1,7 @@
 This test shows the power of thread objects very simply.
 You see, that a single update evaluating to an error causes no harm to the object as a hole.  The previous value is retained, it's as if the exception causing update never occured at all(except for that an error is printed to stderr).
 
->import ThreadObject
+>import Control.Concurrent.ThreadObject
 >main :: IO ()
 >main = do
 > to <- threadObject

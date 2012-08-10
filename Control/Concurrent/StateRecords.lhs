@@ -15,18 +15,27 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
->module StateRecords where
+This module is KNOWN to be buggy :/
 
->import ThreadObject
+>module Control.Concurrent.StateRecords where
+
+>import Control.Concurrent.ThreadObject
+>import Control.Exception
 
 >data RecorderSignal signal = RecorderSignal Bool (Maybe signal) 
 
->type StateRecords a signal = ThreadObject ((Maybe a, [a],[a]),(ThreadObject a signal)) ()
+>type History a = (Maybe a, [a],[a])
 
->stateRecords :: ThreadObject a signal -> IO (StateRecords a signal)
->stateRecords to = do
+This isn't a very good type name. This is one instance of a set of previous values that a threadObject as had.
+
+>type Record a signal = (History a,(ThreadObject a signal))
+
+>type StateRecords a signal = ThreadObject (Record a signal) ()
+
+>stateRecords :: Exception exception => ThreadObject a signal -> (Record a signal -> exception -> IO (Record a signal)) -> IO (StateRecords a signal)
+>stateRecords to exceptionHandler = do
 > stateRecordsObject <- threadObject
-> objectInit stateRecordsObject (InitializedNotSynced ((Nothing,[],[]),to)) noSyncOnGet noSyncOnPut
+> objectInit stateRecordsObject (DoNotSync (SeedInitially ((Nothing,[],[]),to))) noSyncOnPut exceptionHandler
 > return stateRecordsObject 
 
 >recordState ::  Int -> StateRecords a signal -> a -> IO ()
